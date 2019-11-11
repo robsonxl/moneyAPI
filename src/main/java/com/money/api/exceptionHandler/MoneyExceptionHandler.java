@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.money.api.service.exception.CategoriaInexistenteException;
+import com.money.api.service.exception.PessoaInexistenteOuInativaException;
+
 @ControllerAdvice
 public class MoneyExceptionHandler extends ResponseEntityExceptionHandler{
 	
@@ -44,18 +47,18 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler{
 	}
 	
 	private List<Error> errorList(BindingResult bindingResult){
-		List<Error> errorList = new ArrayList<MoneyExceptionHandler.Error>();
+		List<Error> errorList = new ArrayList<Error>();
 		for (FieldError fieldError : bindingResult.getFieldErrors()) {
-			String businessMsg = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+			String bussinessMsg = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
 			String errorMsg = fieldError.toString();
-			errorList.add(new Error(businessMsg, errorMsg));
+			errorList.add(new Error(bussinessMsg, errorMsg));
 		}
 		return errorList;
 	}
 	
 	@ExceptionHandler({DataIntegrityViolationException.class})
 	public ResponseEntity<Object> dataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
-		List<Error> errorList = new ArrayList<MoneyExceptionHandler.Error>();
+		List<Error> errorList = new ArrayList<Error>();
 		String businessMsg = messageSource.getMessage("recurso.operacao.nao.permitida", null, LocaleContextHolder.getLocale());
 		String errorMsg = ExceptionUtils.getRootCauseMessage(ex);
 		errorList.add(new Error(businessMsg, errorMsg));
@@ -70,31 +73,24 @@ public class MoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 	
-	public static class Error{
-		
-		private String businessMsg;
-		private String errorMsg;
-		
-		public Error(String businessMsg, String errorMsg) {
-			this.businessMsg = businessMsg;
-			this.errorMsg =  errorMsg;
-		}
-		public String getBusinessMsg() {
-			return businessMsg;
-		}
-
-		public void setBusinessMsg(String businessMsg) {
-			this.businessMsg = businessMsg;
-		}
-
-		public String getErrorMsg() {
-			return errorMsg;
-		}
-
-		public void setErrorMsg(String errorMsg) {
-			this.errorMsg = errorMsg;
-		}
-		
+	
+	@ExceptionHandler({CategoriaInexistenteException.class})
+	public ResponseEntity<Object> handleCategoriaInexistenteException(CategoriaInexistenteException ex, WebRequest request) {
+		String businessMsg = messageSource.getMessage("recurso.categoria.inexistente", null, LocaleContextHolder.getLocale());
+		String errorMsg = ex.getCause()!=null? ex.getCause().toString(): ex.toString();
+		List<Error> errors = Arrays.asList(new Error(businessMsg, errorMsg));
+		return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
-
+	
+	
+	@ExceptionHandler({PessoaInexistenteOuInativaException.class})
+	public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(PessoaInexistenteOuInativaException ex, WebRequest request) {
+		String businessMsg = messageSource.getMessage("recurso.pessoa.inexistente.inativa", null, LocaleContextHolder.getLocale());
+		String errorMsg = ex.getCause()!=null? ex.getCause().toString(): ex.toString();
+		List<Error> errors = Arrays.asList(new Error(businessMsg, errorMsg));
+		return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+	}
+	
+	
+	
 }

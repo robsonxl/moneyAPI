@@ -25,14 +25,17 @@ public class Pessoa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
+	
 	@NotNull
 	 @JsonInclude(Include.NON_NULL)
 	private String nome;
+	
 	@NotNull
 	 @JsonInclude(Include.NON_NULL)
 	private Boolean ativo;
+	
 	@Embedded
-	 @JsonInclude(Include.NON_NULL)
+	@JsonInclude(Include.NON_NULL)
 	private Endereco endereco;
 	
 	@JsonIgnore

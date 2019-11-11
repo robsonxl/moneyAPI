@@ -3,8 +3,6 @@ package com.money.api.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,7 +20,12 @@ public class CategoriaService {
 	public List<Categoria> listarLancamentos() {
 		return categoriaRepository.findAll();
 	}
-
+	
+	/**
+	 * 
+	 * @param codigo
+	 * @return
+	 */
 	public Categoria listarCategoriaPorId(Long codigo) {
 		Optional<Categoria> categoria = categoriaRepository.findById(codigo);
 		if(categoria.isPresent()) {
@@ -31,7 +34,11 @@ public class CategoriaService {
 			throw new EmptyResultDataAccessException(1);
 		}
 	}
-
+	/**
+	 * 
+	 * @param categoria
+	 * @return
+	 */
 	public Categoria salvarNovaCategoria(Categoria categoria) {
 		return categoriaRepository.save(categoria);
 	}
@@ -39,7 +46,12 @@ public class CategoriaService {
 	public void deletarPorId(Long codigo) {
 		 categoriaRepository.deleteById(codigo);
 	}
-
+	/**
+	 * 
+	 * @param categoria
+	 * @param codigo
+	 * @return
+	 */
 	public Categoria atualizarCategoria(Categoria categoria, Long codigo) {
 		Optional<Categoria> categoriaSalva = categoriaRepository.findById(codigo);
 		if(categoriaSalva.isPresent()) {
