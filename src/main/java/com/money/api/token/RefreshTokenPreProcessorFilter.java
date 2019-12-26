@@ -29,7 +29,7 @@ public class RefreshTokenPreProcessorFilter implements Filter{
 			for(Cookie cookie: req.getCookies() ) {
 				if(cookie.getName().equalsIgnoreCase("refreshtoken")) {
 					String refreshToken = cookie.getValue(); 
-					req = new RefreshTokenServletRequesteWrapper(req, refreshToken);
+					req = new RefreshTokenServletRequesteWrapper(req, refreshToken); //TODO: altera para uma classe de instancia.
 				}
 			}  
 		}

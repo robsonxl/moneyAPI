@@ -18,16 +18,23 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+ 	
 	
-	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory().
+			clients.inMemory().
 			withClient("angular").
-				secret("{noop}458225").
-					scopes("read","write").
-						authorizedGrantTypes("password","refresh_token").
-							accessTokenValiditySeconds(20).
-							refreshTokenValiditySeconds(3600 *24);
+				secret("$2a$10$uC.oL8K55bAo/xZDqvbIZu4hqRX4Ga5In0cpswKeuMu6.RaMkdGxu").
+				scopes("read","write").
+				authorizedGrantTypes("password","refresh_token").
+				accessTokenValiditySeconds(1800).
+				refreshTokenValiditySeconds(3600 *24)
+			.and()
+			.withClient("mobile").
+				secret("$2a$10$nSd7E8SO0In9wshWnQbvWO5faL22O316KDkxFg.XrJq1OoX9HtjQ2").
+				scopes("read").
+				authorizedGrantTypes("password","refresh_token").
+				accessTokenValiditySeconds(1800).
+				refreshTokenValiditySeconds(3600 *24);
 	}
 	
 	@Override
@@ -38,6 +45,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		authenticationManager(authenticationManager);
 			
 	}
+ 
 	
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {

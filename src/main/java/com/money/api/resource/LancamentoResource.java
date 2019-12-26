@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,22 +35,20 @@ public class LancamentoResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
-	/*
-	 * @GetMapping public List<Lancamento> listar() { return
-	 * lancamentoService.listarLancamentos(); }
-	 */
-
 	@GetMapping("/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	public Lancamento listarPorId(@PathVariable Long codigo) {
 		return lancamentoService.listarLancamentoPorId(codigo);
 	}
 	
 	@GetMapping 
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
 	  public Page<Lancamento>listarLancamentos(LancamentoFilter lancamentoFilter, Pageable page){ 
 		  return lancamentoService.listarLancamentosCustomizado(lancamentoFilter, page); 
 	}
 	 
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
 	public ResponseEntity<Lancamento> criarLancamento(@RequestBody @Valid Lancamento lancamento,
 			HttpServletResponse response) {
 		Lancamento novoLancamento = lancamentoService.criaNovoLancamento(lancamento);
@@ -66,6 +65,7 @@ public class LancamentoResource {
 
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO') and #oauth2.hasScope('write')")
 	public void deletarLancamento(@PathVariable Long codigo) {
 		lancamentoService.deletarLancamentoPorId(codigo);
 	}
